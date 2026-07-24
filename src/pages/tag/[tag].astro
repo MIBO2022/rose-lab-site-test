@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleCard from '../../components/content/ArticleCard.astro';
+import { getVisiblePosts } from '../../utils/content';
+
+export async function getStaticPaths() {
+  const posts = await getVisiblePosts();
+  const tags = [...new Set(posts.flatMap((post) => post.data.tags ?? []))];
+  return tags.map((tag) => ({
+    params: { tag },
+    props: { tag, posts: posts.filter((post) => post.data.tags?.includes(tag)) },
+  }));
+}
+
+const { tag, posts } = Astro.props;
+---
+<BaseLayout
+  title={`${tag}｜Rose Lab`}
+  description={`瀏覽 Rose Lab 標籤「${tag}」的相關文章。`}
+  breadcrumbs={[
+    { name: '首頁', path: '/' },
+    { name: '文章', path: '/blog/' },
+    { name: tag, path: Astro.url.pathname },
+  ]}
+>
+  <main class="wrap listing-page taxonomy-page">
+    <nav class="breadcrumbs" aria-label="麵包屑"><a href="/">首頁</a><span>›</span><a href="/blog/">文章</a><span>›</span><span>{tag}</span></nav>
+    <header class="page-header"><p class="eyebrow">TAG</p><h1>#{tag}</h1><p>共 {posts.length} 篇文章</p></header>
+    <div class="article-grid">
+      {posts.map((post, index) => <ArticleCard post={post} eager={index === 0} />)}
+    </div>
+  </main>
+</BaseLayout>

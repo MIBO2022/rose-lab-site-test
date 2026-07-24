@@ -1,0 +1,17 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HomeIntro from '../components/home/HomeIntro.astro';
+import CategoryGrid from '../components/home/CategoryGrid.astro';
+import RoundupSection from '../components/home/RoundupSection.astro';
+import TabbedArticles from '../components/home/TabbedArticles.astro';
+import { HOME_CATEGORIES } from '../config/site';
+import { getVisiblePosts, serializePost, sortPopularPosts } from '../utils/content';
+
+const posts = await getVisiblePosts();
+const featuredPosts = posts.filter((post) => post.data.featured);
+const roundup = (featuredPosts.length >= 5 ? featuredPosts : posts).slice(0, 5);
+const popularPosts = sortPopularPosts(posts);
+---
+<BaseLayout title="Rose Lab 自學研究所|孩子英文學習、線上外師課與免費資源" description="Rose Lab 由一位無後援雙寶媽建立，分享親子閱讀、幼兒英文、線上外師課、家庭自學與戶外探索的真實經驗，陪台灣家長在有限時間與預算中，找到適合自己家庭的育兒方式。">
+  <main class="home wrap"><HomeIntro /><CategoryGrid categories={HOME_CATEGORIES} /><RoundupSection posts={roundup} /><TabbedArticles latest={posts.map(serializePost)} popular={popularPosts.map(serializePost)} /></main>
+</BaseLayout>

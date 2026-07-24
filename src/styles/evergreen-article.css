@@ -1,0 +1,320 @@
+/* Rose Lab Evergreen 長文元件
+   建議匯入全站 global.css，所有選擇器均使用 evergreen- 前綴，避免影響其他頁面。 */
+
+.evergreen-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem .75rem;
+  margin: 0 0 1.25rem;
+  color: #6f6571;
+  font-size: .88rem;
+}
+
+.evergreen-meta span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2rem;
+  padding: .3rem .72rem;
+  border: 1px solid #eadfe6;
+  border-radius: 999px;
+  background: #fffafb;
+}
+
+.evergreen-summary {
+  margin: 1.25rem 0 1.5rem;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid #e7d8e2;
+  border-radius: 1.25rem;
+  background: linear-gradient(145deg, #fff9fb 0%, #fbf6ff 100%);
+  box-shadow: 0 10px 28px rgba(90, 65, 82, .08);
+}
+
+.evergreen-summary h2 {
+  margin: .2rem 0 .75rem;
+  font-size: clamp(1.35rem, 4vw, 1.85rem);
+  line-height: 1.35;
+}
+
+.evergreen-eyebrow {
+  margin: 0;
+  color: #8c4f70;
+  font-weight: 800;
+  letter-spacing: .04em;
+}
+
+.evergreen-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1.2rem 0;
+}
+
+.evergreen-summary-grid > div {
+  padding: 1rem;
+  border-radius: 1rem;
+  background: rgba(255,255,255,.82);
+}
+
+.evergreen-summary-grid h3 {
+  margin: 0 0 .55rem;
+  font-size: 1rem;
+}
+
+.evergreen-summary-grid ul {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.evergreen-summary-grid li + li {
+  margin-top: .35rem;
+}
+
+.evergreen-one-line {
+  margin: 1rem 0 0;
+  padding-top: 1rem;
+  border-top: 1px dashed #ddc9d6;
+}
+
+.evergreen-jump {
+  margin: 1.5rem 0;
+  padding: 1rem 1.1rem;
+  border: 1px solid #e6dfe8;
+  border-radius: 1rem;
+  background: #fff;
+}
+
+.evergreen-jump > p {
+  margin: 0 0 .7rem;
+  font-weight: 800;
+}
+
+.evergreen-jump > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .55rem;
+}
+
+.evergreen-jump a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.35rem;
+  padding: .45rem .78rem;
+  border-radius: .75rem;
+  background: #f5eef5;
+  color: #673f59;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.evergreen-jump a:hover,
+.evergreen-jump a:focus-visible {
+  background: #eaddea;
+  text-decoration: none;
+}
+
+.evergreen-note {
+  margin: 1.4rem 0;
+  padding: 1rem 1.1rem;
+  border-left: .3rem solid #9b6683;
+  border-radius: .25rem .9rem .9rem .25rem;
+  background: #faf4f8;
+}
+
+.evergreen-note p {
+  margin: 0;
+}
+
+.evergreen-note p + p {
+  margin-top: .45rem;
+}
+
+.evergreen-note-title {
+  font-weight: 800;
+}
+
+.evergreen-note--rose {
+  border-left-color: #9b6683;
+  background: #fbf1f6;
+}
+
+.evergreen-note--key {
+  border-left-color: #8c74a8;
+  background: #f6f2fb;
+}
+
+.evergreen-note--warning {
+  border-left-color: #bd8251;
+  background: #fff7ed;
+}
+
+.evergreen-timeline {
+  position: relative;
+  display: grid;
+  gap: .85rem;
+  margin: 1.5rem 0 2rem;
+  padding-left: 1.2rem;
+}
+
+.evergreen-timeline::before {
+  content: "";
+  position: absolute;
+  top: .4rem;
+  bottom: .4rem;
+  left: .34rem;
+  width: 2px;
+  background: #dcc7d5;
+}
+
+.evergreen-timeline-item {
+  position: relative;
+  padding: .9rem 1rem;
+  border: 1px solid #eadfe6;
+  border-radius: .9rem;
+  background: #fff;
+}
+
+.evergreen-timeline-item::before {
+  content: "";
+  position: absolute;
+  top: 1.1rem;
+  left: -1.22rem;
+  width: .7rem;
+  height: .7rem;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: #9b6683;
+  box-shadow: 0 0 0 1px #d7bdcc;
+}
+
+.evergreen-timeline-item span {
+  display: inline-block;
+  margin-right: .5rem;
+  color: #8c4f70;
+  font-size: .84rem;
+  font-weight: 800;
+}
+
+.evergreen-timeline-item strong {
+  font-size: 1rem;
+}
+
+.evergreen-timeline-item p {
+  margin: .35rem 0 0;
+  color: #635c63;
+}
+
+.evergreen-faq {
+  margin: 1rem 0 2rem;
+}
+
+.evergreen-faq details {
+  margin: .7rem 0;
+  border: 1px solid #e7dfe5;
+  border-radius: .9rem;
+  background: #fff;
+  overflow: hidden;
+}
+
+.evergreen-faq summary {
+  position: relative;
+  padding: 1rem 3rem 1rem 1rem;
+  cursor: pointer;
+  font-weight: 800;
+  list-style: none;
+}
+
+.evergreen-faq summary::-webkit-details-marker {
+  display: none;
+}
+
+.evergreen-faq summary::after {
+  content: "+";
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
+  color: #8c4f70;
+  font-size: 1.35rem;
+}
+
+.evergreen-faq details[open] summary::after {
+  content: "−";
+}
+
+.evergreen-faq details p {
+  margin: 0;
+  padding: 0 1rem 1rem;
+}
+
+/* 長文中的表格：手機可橫向捲動，不壓縮內容。 */
+.prose table,
+article table,
+.blog-content table {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  -webkit-overflow-scrolling: touch;
+}
+
+.prose th,
+.prose td,
+article th,
+article td,
+.blog-content th,
+.blog-content td {
+  min-width: 8rem;
+  padding: .75rem;
+  border: 1px solid #e8e0e5;
+  text-align: left;
+  vertical-align: top;
+}
+
+.prose th,
+article th,
+.blog-content th {
+  background: #f8f3f6;
+}
+
+/* 避免錨點被固定頁首遮住。 */
+[id] {
+  scroll-margin-top: 6rem;
+}
+
+@media (max-width: 720px) {
+  .evergreen-summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .evergreen-summary,
+  .evergreen-jump,
+  .evergreen-note {
+    border-radius: .85rem;
+  }
+
+  .evergreen-meta {
+    gap: .4rem;
+  }
+
+  .evergreen-meta span {
+    font-size: .8rem;
+  }
+
+  .evergreen-jump > div {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .evergreen-jump a {
+    justify-content: center;
+    text-align: center;
+    font-size: .88rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .evergreen-jump a {
+    scroll-behavior: auto;
+  }
+}

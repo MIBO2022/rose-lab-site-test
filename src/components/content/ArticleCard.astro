@@ -1,0 +1,30 @@
+---
+import { categoryPath, formatDate, postPath, type BlogPost } from '../../utils/content';
+
+interface Props {
+  post: BlogPost;
+  headingLevel?: 'h2' | 'h3';
+  eager?: boolean;
+}
+
+const { post, headingLevel = 'h2', eager = false } = Astro.props;
+const Heading = headingLevel;
+const href = postPath(post);
+---
+<article class="article-card">
+  <a class="article-cover" href={href} aria-label={`閱讀文章：${post.data.title}`}>
+    <img
+      src={post.data.cover ?? '/sample-cover.webp'}
+      alt={post.data.coverAlt ?? post.data.title}
+      loading={eager ? 'eager' : 'lazy'}
+      fetchpriority={eager ? 'high' : 'auto'}
+      decoding="async"
+    />
+  </a>
+  <div class="article-card-body">
+    <a class="tag" href={categoryPath(post.data.category)}>{post.data.category}</a>
+    <Heading><a href={href}>{post.data.title}</a></Heading>
+    <p>{post.data.description}</p>
+    <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
+  </div>
+</article>

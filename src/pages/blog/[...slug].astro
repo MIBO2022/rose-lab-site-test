@@ -1,0 +1,13 @@
+---
+import ArticleLayout from '../../layouts/ArticleLayout.astro';
+import { getVisiblePosts } from '../../utils/content';
+
+export async function getStaticPaths() {
+  const posts = await getVisiblePosts();
+  return posts.map((post) => ({ params: { slug: post.slug }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+---
+<ArticleLayout frontmatter={post.data} post={post}><Content /></ArticleLayout>

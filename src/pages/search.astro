@@ -1,0 +1,117 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout
+  title="搜尋文章｜Rose Lab 自學研究所"
+  description="搜尋 Rose Lab 的英文自學、線上外師課、幼兒園選擇與家庭教育文章。"
+  noindex={true}
+  breadcrumbs={[
+    { name: '首頁', path: '/' },
+    { name: '搜尋', path: '/search/' },
+  ]}
+>
+  <main class="search-page">
+    <div class="wrap search-page-inner">
+      <nav class="breadcrumbs" aria-label="麵包屑"><a href="/">首頁</a><span>›</span><span>搜尋</span></nav>
+      <header class="search-page-header">
+        <p class="eyebrow">SEARCH</p>
+        <h1>搜尋 Rose Lab 文章</h1>
+        <p>輸入文章名稱、工具、分類或關鍵字，例如「Starfall」、「外師課」或「幼兒園費用」。</p>
+      </header>
+
+      <form class="search-page-form" role="search" action="/search/" method="get">
+        <label class="sr-only" for="site-search-query">搜尋文章</label>
+        <input id="site-search-query" name="q" type="search" placeholder="輸入關鍵字" autocomplete="off" />
+        <button type="submit">搜尋</button>
+      </form>
+
+      <p id="search-page-status" class="search-page-status" aria-live="polite">正在準備搜尋資料……</p>
+      <section id="search-page-results" class="search-page-results" aria-label="搜尋結果"></section>
+    </div>
+  </main>
+
+  <script>
+    const input = document.querySelector('#site-search-query');
+    const form = document.querySelector('.search-page-form');
+    const status = document.querySelector('#search-page-status');
+    const results = document.querySelector('#search-page-results');
+    const params = new URLSearchParams(window.location.search);
+    let posts = [];
+
+    const escapeHTML = (value = '') => value.replace(/[&<>'"]/g, (char) => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+    })[char]);
+
+    const normalize = (value = '') => value.toLocaleLowerCase('zh-Hant-TW').replace(/\s+/g, ' ').trim();
+
+    const scorePost = (post, query) => {
+      const q = normalize(query);
+      if (!q) return 0;
+      const title = normalize(post.title);
+      const category = normalize(post.category);
+      const tags = normalize((post.tags || []).join(' '));
+      const series = normalize(post.series || '');
+      const description = normalize(post.description);
+      let score = 0;
+      if (title === q) score += 100;
+      if (title.includes(q)) score += 40;
+      if (category.includes(q)) score += 20;
+      if (tags.includes(q)) score += 18;
+      if (series.includes(q)) score += 15;
+      if (description.includes(q)) score += 8;
+      return score;
+    };
+
+    const render = (query) => {
+      const q = query.trim();
+      if (!q) {
+        status.textContent = `目前共有 ${posts.length} 篇可搜尋文章。`;
+        results.innerHTML = '<div class="search-empty"><strong>開始搜尋</strong><p>可以搜尋 Starfall、TutorJr、免費 App、全美語幼兒園或教育預算。</p></div>';
+        return;
+      }
+      const matched = posts
+        .map((post) => ({ post, score: scorePost(post, q) }))
+        .filter((item) => item.score > 0)
+        .sort((a, b) => b.score - a.score || new Date(b.post.pubDate) - new Date(a.post.pubDate));
+
+      status.textContent = matched.length ? `找到 ${matched.length} 篇與「${q}」相關的文章。` : `找不到與「${q}」相關的文章。`;
+      results.innerHTML = matched.length ? matched.map(({ post }) => `
+        <article class="search-result-card">
+          <a class="search-result-cover" href="${post.url}">
+            ${post.cover ? `<img src="${escapeHTML(post.cover)}" alt="" loading="lazy" decoding="async">` : '<span>Rose Lab</span>'}
+          </a>
+          <div class="search-result-copy">
+            <div class="search-result-meta"><span>${escapeHTML(post.category)}</span>${post.series ? `<span>${escapeHTML(post.series)}</span>` : ''}</div>
+            <h2><a href="${post.url}">${escapeHTML(post.title)}</a></h2>
+            <p>${escapeHTML(post.description)}</p>
+            <a class="search-result-more" href="${post.url}">閱讀文章 →</a>
+          </div>
+        </article>`).join('') : '<div class="search-empty"><strong>目前沒有符合結果</strong><p>請縮短關鍵字，或前往「主題總覽」查看分類、系列與標籤。</p><a href="/topics/">查看主題總覽</a></div>';
+    };
+
+    fetch('/search-index.json')
+      .then((response) => {
+        if (!response.ok) throw new Error('search index unavailable');
+        return response.json();
+      })
+      .then((data) => {
+        posts = data;
+        const initialQuery = params.get('q') || '';
+        input.value = initialQuery;
+        render(initialQuery);
+      })
+      .catch(() => {
+        status.textContent = '搜尋資料暫時無法載入，請稍後再試。';
+        results.innerHTML = '<div class="search-empty"><a href="/blog/">改看全部文章</a></div>';
+      });
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const query = input.value.trim();
+      const url = new URL(window.location.href);
+      query ? url.searchParams.set('q', query) : url.searchParams.delete('q');
+      window.history.replaceState({}, '', url);
+      render(query);
+    });
+  </script>
+</BaseLayout>

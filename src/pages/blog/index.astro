@@ -1,0 +1,15 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleCard from '../../components/content/ArticleCard.astro';
+import { getVisiblePosts } from '../../utils/content';
+
+const posts = await getVisiblePosts();
+---
+<BaseLayout title="全部文章｜Rose Lab" description="浏览 Rose Lab 的幼儿英文、线上外师课、免费资源与家庭陪学文章。" breadcrumbs={[{ name: '首頁', path: '/' }, { name: '文章', path: '/blog/' }]}>
+  <main class="wrap listing-page">
+    <header class="page-header"><p class="eyebrow">ROSE LAB JOURNAL</p><h1>全部文章</h1><p>依时间浏览幼儿英文、线上外师课、免费资源与家庭陪学文章。</p></header>
+    <div class="article-grid">
+      {posts.map((post, index) => <ArticleCard post={post} eager={index === 0} />)}
+    </div>
+  </main>
+</BaseLayout>

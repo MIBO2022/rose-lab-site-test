@@ -1,0 +1,309 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import { SITE } from '../config/site';
+import {
+  categoryCounts,
+  categoryPath,
+  estimateReadingMinutes,
+  formatDate,
+  getVisiblePosts,
+  plainTextFromMarkdown,
+  postPath,
+  relatedPosts,
+  tagPath,
+} from '../utils/content';
+const { frontmatter, post } = Astro.props;
+const posts = await getVisiblePosts();
+const latest = posts.slice(0,5);
+const popular = (posts.filter(p=>p.data.featured).length ? posts.filter(p=>p.data.featured) : posts).slice(0,5);
+const categories = categoryCounts(posts);
+const tags = frontmatter.tags?.length ? frontmatter.tags : [frontmatter.category];
+const currentPath = Astro.url.pathname.replace(/\/$/, '');
+const currentIndex = posts.findIndex((post) => postPath(post).replace(/\/$/, '') === currentPath);
+const newerPost = currentIndex > 0 ? posts[currentIndex - 1] : null;
+const olderPost = currentIndex >= 0 && currentIndex < posts.length - 1 ? posts[currentIndex + 1] : null;
+const currentPost = currentIndex >= 0 ? posts[currentIndex] : null;
+const related = currentPost ? relatedPosts(currentPost, posts, 8) : posts.filter(post => post.slug !== currentPost?.slug).slice(0, 8);
+const plainBody = plainTextFromMarkdown(post?.body ?? '');
+const wordCount = plainBody.replace(/\s+/g, '').length;
+const readingMinutes = estimateReadingMinutes(plainBody, frontmatter.readingMinutes);
+const siteUrl = Astro.site ?? new URL(SITE.url);
+const articleUrl = new URL(Astro.url.pathname, siteUrl);
+const articleImage = new URL(frontmatter.cover ?? '/og-default.jpg', siteUrl);
+const articleJsonLd = {
+  '@type': 'BlogPosting',
+  '@id': `${articleUrl.href}#article`,
+  url: articleUrl.href,
+  headline: frontmatter.title,
+  description: frontmatter.description,
+  image: [articleImage.href],
+  thumbnailUrl: articleImage.href,
+  datePublished: frontmatter.pubDate.toISOString(),
+  dateModified: (frontmatter.updatedDate ?? frontmatter.pubDate).toISOString(),
+  mainEntityOfPage: { '@id': `${articleUrl.href}#webpage` },
+  isPartOf: { '@id': `${SITE.url}/#website` },
+  publisher: { '@id': `${SITE.url}/#organization` },
+  author: {
+    '@type': 'Organization',
+    '@id': `${SITE.url}/#organization`,
+    name: frontmatter.author ?? SITE.author,
+    url: `${SITE.url}/about/`,
+  },
+  articleSection: frontmatter.category,
+  ...(frontmatter.tags?.length ? { keywords: frontmatter.tags.join(', ') } : {}),
+  inLanguage: SITE.language,
+  isAccessibleForFree: true,
+  wordCount,
+  timeRequired: `PT${readingMinutes}M`,
+};
+
+---
+<BaseLayout
+  title={frontmatter.seoTitle ?? frontmatter.title}
+  description={frontmatter.description}
+  image={frontmatter.cover}
+  imageAlt={frontmatter.coverAlt ?? frontmatter.title}
+  type="article"
+  publishedTime={frontmatter.pubDate}
+  modifiedTime={frontmatter.updatedDate ?? frontmatter.pubDate}
+  noindex={frontmatter.noindex}
+  jsonLd={articleJsonLd}
+  breadcrumbs={[
+    { name: '首頁', path: '/' },
+    { name: '文章', path: '/blog/' },
+    { name: frontmatter.category, path: categoryPath(frontmatter.category) },
+    { name: frontmatter.title, path: Astro.url.pathname },
+  ]}
+>
+  <main class="article-page">
+    <div class="article-shell wrap-wide">
+      <nav class="breadcrumbs breadcrumbs-bar" aria-label="麵包屑">
+        <a href="/">⌂ 首頁</a><span>›</span><a href="/blog/">文章</a><span>›</span><a href={categoryPath(frontmatter.category)}>{frontmatter.category}</a><span>›</span><span aria-current="page">{frontmatter.title}</span>
+      </nav>
+
+      <div class="article-layout-grid">
+        <article class="article-main">
+          <header class="article-title-block">
+            <h1>{frontmatter.title}</h1>
+            <div class="article-title-meta">
+              <div class="meta-tags">
+                {tags.map(tag => <a class="meta-chip" href={tagPath(tag)}>{tag}</a>)}
+              </div>
+              <div class="meta-dates">
+                <span>◷ 發布：<time datetime={frontmatter.pubDate.toISOString()}>{formatDate(frontmatter.pubDate)}</time></span>
+                {frontmatter.updatedDate && <span>更新：<time datetime={frontmatter.updatedDate.toISOString()}>{formatDate(frontmatter.updatedDate)}</time></span>}
+                <span>閱讀：約 {readingMinutes} 分鐘</span>
+              </div>
+            </div>
+            {frontmatter.cover && <figure class="article-cover-main"><img src={frontmatter.cover} alt={frontmatter.coverAlt ?? frontmatter.title} loading="eager" fetchpriority="high" decoding="async" /></figure>}
+          </header>
+
+          <section class="lead-summary">
+            <p>{frontmatter.description}</p>
+          </section>
+
+          <div class="article-body" id="article-body"><slot /></div>
+
+          <section class="disclosure-box"><strong>內容說明</strong><p>本文記錄我們家的實際經驗，不代表每個孩子都會有相同結果。部分文章可能含推薦連結，但不影響對優點與問題的真實描述。</p></section>
+
+          <section class="article-end-meta" aria-label="文章分類與標籤">
+            <div class="article-end-row article-end-categories">
+              <span class="article-end-icon" aria-hidden="true">▰</span>
+              <a class="article-end-chip primary" href={categoryPath(frontmatter.category)}>{frontmatter.category}</a>
+              <a class="article-end-chip primary" href="/blog/">Rose Lab 文章</a>
+            </div>
+            <div class="article-end-row article-end-tags">
+              <span class="article-end-icon" aria-hidden="true">◆</span>
+              {tags.map(tag => <a class="article-end-chip" href={tagPath(tag)}>{tag}</a>)}
+            </div>
+          </section>
+
+          <section class:list={["article-follow-banner", { "has-cover": frontmatter.cover }]} style={frontmatter.cover ? `--article-follow-cover: url('${frontmatter.cover}')` : undefined} aria-label="追蹤 Rose Lab">
+            <div class="article-follow-overlay"></div>
+            <div class="article-follow-content">
+              <strong>如果喜歡這篇文章，請按讚或追蹤！</strong>
+              <div class="article-follow-actions">
+                {SITE.instagram && <a href={SITE.instagram} target="_blank" rel="noopener noreferrer">◎ 追蹤 Instagram</a>}
+                {SITE.threads && <a href={SITE.threads} target="_blank" rel="noopener noreferrer">＠ 追蹤 Threads</a>}
+              </div>
+            </div>
+          </section>
+
+          {(newerPost || olderPost) && (
+            <nav class="article-prev-next" aria-label="上一篇與下一篇文章">
+              <div class="article-prev-next-item prev">
+                {olderPost ? (
+                  <a href={postPath(olderPost)}><span class="article-nav-arrow" aria-hidden="true">‹</span><span><small>上一篇</small>{olderPost.data.title}</span></a>
+                ) : <span></span>}
+              </div>
+              <div class="article-prev-next-item next">
+                {newerPost ? (
+                  <a href={postPath(newerPost)}><span><small>下一篇</small>{newerPost.data.title}</span><span class="article-nav-arrow" aria-hidden="true">›</span></a>
+                ) : <span></span>}
+              </div>
+            </nav>
+          )}
+
+          {related.length > 0 && (
+            <section class="related-articles" aria-labelledby="related-articles-title">
+              <h2 id="related-articles-title">相關文章</h2>
+              <div class="related-article-grid">
+                {related.map(post => (
+                  <a class="related-article-card" href={postPath(post)}>
+                    <div class="related-article-cover">
+                      {post.data.cover ? <img src={post.data.cover} alt={post.data.coverAlt ?? post.data.title} loading="lazy" decoding="async" /> : <span>Rose Lab</span>}
+                    </div>
+                    <h3>{post.data.title}</h3>
+                    <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
+                  </a>
+                ))}
+              </div>
+            </section>
+          )}
+
+          <section class="article-bottom-lists">
+            <div>
+              <h2>最新文章</h2>
+              <ul>{latest.map(post=><li><a href={postPath(post)}>{post.data.title}</a><time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time></li>)}</ul>
+            </div>
+            <div>
+              <h2>熱門文章</h2>
+              <ul>{popular.map(post=><li><a href={postPath(post)}>{post.data.title}</a><time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time></li>)}</ul>
+            </div>
+          </section>
+        </article>
+
+        <aside class="article-sidebar" aria-label="文章側欄">
+          <section class="sidebar-widget outline-widget">
+            <h2>文章大綱</h2>
+            <nav id="article-outline" class="article-outline" aria-label="文章大綱"></nav>
+          </section>
+
+          <section class="sidebar-widget category-widget">
+            <h2>分類</h2>
+            <ul>
+              {categories.map(([name,count]) => (
+                <li><a href={categoryPath(name)}><span>▪ {name}</span><em>({count})</em></a></li>
+              ))}
+            </ul>
+          </section>
+
+          <section class="sidebar-widget latest-widget">
+            <h2>最新文章</h2>
+            <div class="latest-mini-list">
+              {latest.map(post => (
+                <a class="latest-mini-item" href={postPath(post)}>
+                  <div class="latest-mini-thumb">
+                    {post.data.cover ? <img src={post.data.cover} alt="" loading="lazy" decoding="async" /> : <span>Rose Lab</span>}
+                  </div>
+                  <strong>{post.data.title}</strong>
+                </a>
+              ))}
+            </div>
+          </section>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+
+  <button id="floating-toc-button" class="floating-toc-button" type="button" aria-label="開啟本文大綱" aria-haspopup="dialog" aria-controls="floating-toc-modal">
+    <span class="floating-toc-icon" aria-hidden="true">☷</span>
+    <span class="floating-toc-label">目錄</span>
+  </button>
+
+  <div id="floating-toc-modal" class="floating-toc-modal" hidden>
+    <div class="floating-toc-backdrop" data-close-toc></div>
+    <section class="floating-toc-dialog" role="dialog" aria-modal="true" aria-labelledby="floating-toc-title">
+      <header class="floating-toc-header">
+        <h2 id="floating-toc-title"><span aria-hidden="true">☷</span> 本文大綱</h2>
+        <button type="button" class="floating-toc-close" aria-label="關閉本文大綱" data-close-toc>×</button>
+      </header>
+      <nav id="floating-article-outline" class="floating-article-outline" aria-label="本文大綱"></nav>
+    </section>
+  </div>
+
+  <script is:inline>
+    (()=>{
+      const body=document.getElementById('article-body');
+      const outline=document.getElementById('article-outline');
+      if(!body||!outline)return;
+      const hs=[...body.querySelectorAll('h2,h3')];
+      let h2Count=0;
+      let h3Count=0;
+      hs.forEach((h,i)=>{
+        if(!h.id)h.id=`section-${i+1}`;
+        const a=document.createElement('a');
+        a.href=`#${h.id}`;
+        if(h.tagName==='H2'){
+          h2Count+=1;
+          h3Count=0;
+          a.textContent=`${h2Count}. ${h.textContent||''}`;
+          a.className='outline-h2';
+        }else{
+          h3Count+=1;
+          a.textContent=`${h2Count}.${h3Count} ${h.textContent||''}`;
+          a.className='outline-h3';
+        }
+        outline.appendChild(a);
+      });
+      if(!hs.length)outline.innerHTML='<span class="outline-empty">加入二級與三級標題後，文章大綱會自動產生。</span>';
+
+      const links=[...outline.querySelectorAll('a')];
+      const observer=new IntersectionObserver((entries)=>{
+        entries.forEach(entry=>{
+          if(!entry.isIntersecting)return;
+          links.forEach(link=>link.classList.toggle('active',link.getAttribute('href')===`#${entry.target.id}`));
+        });
+      },{rootMargin:'-20% 0px -70% 0px'});
+      hs.forEach(h=>observer.observe(h));
+
+      const floatingOutline=document.getElementById('floating-article-outline');
+      if(floatingOutline){
+        floatingOutline.innerHTML=outline.innerHTML;
+      }
+
+      const tocButton=document.getElementById('floating-toc-button');
+      const tocModal=document.getElementById('floating-toc-modal');
+      const tocDialog=tocModal?.querySelector('.floating-toc-dialog');
+      const closeButtons=tocModal?.querySelectorAll('[data-close-toc]')||[];
+      let lastFocused=null;
+
+      const openToc=()=>{
+        if(!tocModal)return;
+        lastFocused=document.activeElement;
+        tocModal.hidden=false;
+        document.body.classList.add('toc-modal-open');
+        requestAnimationFrame(()=>tocModal.classList.add('is-open'));
+        tocDialog?.querySelector('a,button')?.focus();
+      };
+      const closeToc=()=>{
+        if(!tocModal)return;
+        tocModal.classList.remove('is-open');
+        document.body.classList.remove('toc-modal-open');
+        window.setTimeout(()=>{tocModal.hidden=true;lastFocused?.focus?.();},180);
+      };
+
+      tocButton?.addEventListener('click',openToc);
+      closeButtons.forEach(button=>button.addEventListener('click',closeToc));
+      floatingOutline?.addEventListener('click',event=>{
+        const link=event.target.closest('a');
+        if(link)closeToc();
+      });
+      document.addEventListener('keydown',event=>{
+        if(event.key==='Escape'&&!tocModal?.hidden)closeToc();
+      });
+
+      const floatingLinks=[...(floatingOutline?.querySelectorAll('a')||[])];
+      const syncActive=(id)=>{
+        links.forEach(link=>link.classList.toggle('active',link.getAttribute('href')===`#${id}`));
+        floatingLinks.forEach(link=>link.classList.toggle('active',link.getAttribute('href')===`#${id}`));
+      };
+      observer.disconnect();
+      const syncedObserver=new IntersectionObserver((entries)=>{
+        entries.forEach(entry=>{if(entry.isIntersecting)syncActive(entry.target.id);});
+      },{rootMargin:'-20% 0px -70% 0px'});
+      hs.forEach(h=>syncedObserver.observe(h));
+    })();
+  </script>
+</BaseLayout>

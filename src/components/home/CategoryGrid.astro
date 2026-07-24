@@ -1,0 +1,10 @@
+---
+const { categories } = Astro.props;
+---
+<section class="category-grid" aria-label="重要分類">
+  {categories.map(([title, desc, url, color]) => (
+    <a class="category-card" href={url} style={`--card-color:${color}`}>
+      <strong>{title}</strong><span>{desc}</span><em>查看文章 →</em>
+    </a>
+  ))}
+</section>

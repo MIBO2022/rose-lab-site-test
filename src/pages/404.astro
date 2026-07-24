@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout title="找不到頁面｜Rose Lab" description="這個頁面可能已移動或網址輸入錯誤。" noindex={true}>
+  <main class="wrap error-page">
+    <p class="eyebrow">404 · PAGE NOT FOUND</p>
+    <h1>這一頁暫時找不到</h1>
+    <p>可能是網址輸入錯誤，或文章已經移到新的位置。你可以回首頁、瀏覽全部文章，或使用右上角搜尋。</p>
+    <div class="error-actions"><a class="button" href="/">回到首頁</a><a class="button secondary" href="/blog/">瀏覽全部文章</a></div>
+  </main>
+</BaseLayout>

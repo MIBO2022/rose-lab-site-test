@@ -1,0 +1,17 @@
+---
+const { posts } = Astro.props;
+---
+<section class="roundup-section" aria-labelledby="roundup-title">
+  <h2 class="roundup-label" id="roundup-title">寫超完整懶人包</h2>
+  <div class="roundup-grid">
+    {posts.map((post) => (
+      <article class="roundup-card">
+        <a class="roundup-cover" href={`/blog/${post.slug}/`} aria-label={`閱讀文章：${post.data.title}`}>
+          <img src={post.data.cover ?? '/sample-cover.webp'} alt={post.data.coverAlt ?? post.data.title} loading="lazy" decoding="async" />
+          <span class="roundup-overlay" aria-hidden="true"></span><span class="roundup-category">{post.data.category}</span>
+          <div class="roundup-text"><h3>{post.data.title}</h3><time datetime={post.data.pubDate.toISOString()}>↻ {post.data.pubDate.toLocaleDateString('zh-TW')}</time></div>
+        </a>
+      </article>
+    ))}
+  </div>
+</section>

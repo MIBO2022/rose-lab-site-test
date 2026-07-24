@@ -1,0 +1,479 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const startingPoints = [
+  {
+    number: '01',
+    label: '幼兒英文',
+    title: '孩子剛開始接觸英文',
+    description:
+      '不知道幾歲開始、要先聽英文、讀繪本，還是直接找外師？先從家庭做得到的英文輸入方式開始。',
+    questions: [
+      '幾歲開始接觸英文比較好？',
+      '家長英文不好也能陪嗎？',
+      '每天需要安排多久？',
+    ],
+    href: '/tag/幼兒英文/',
+    linkText: '從幼兒英文開始',
+  },
+  {
+    number: '02',
+    label: '線上外師課',
+    title: '正在考慮線上外師課',
+    description:
+      '孩子看到外師不敢回答、一直看媽媽，未必代表不適合。先了解試聽時真正需要觀察什麼。',
+    questions: [
+      '孩子不開口正常嗎？',
+      '家長要不要陪在旁邊？',
+      '怎麼判斷老師適不適合？',
+    ],
+    href: '/category/線上外師課/',
+    linkText: '查看外師課真實紀錄',
+  },
+  {
+    number: '03',
+    label: '免費資源',
+    title: '想先找免費或低成本資源',
+    description:
+      '不急著買課程，先看看有哪些網站、App 和圖書資源，可以自然放進家庭生活。',
+    questions: [
+      '哪些免費資源值得用？',
+      '孩子會不會只是在看動畫？',
+      '免費資源怎麼和共讀搭配？',
+    ],
+    href: '/category/免費英文資源/',
+    linkText: '查看免費學習資源',
+  },
+  {
+    number: '04',
+    label: '親子共學',
+    title: '想建立家庭學習習慣',
+    description:
+      '不需要每天排滿課表。從閱讀、聊天、興趣探索和生活經驗，慢慢建立適合自己家的節奏。',
+    questions: [
+      '孩子坐不住怎麼辦？',
+      '每天只有10分鐘有用嗎？',
+      '怎麼讓學習不變成壓力？',
+    ],
+    href: '/category/親子共學/',
+    linkText: '查看家庭共學方法',
+  },
+];
+
+const quickTopics = [
+  {
+    title: '孩子第一次上外師課，不敢回答怎麼辦？',
+    description:
+      '先看我們從緊張、等待媽媽代答，到比較願意自己開口的10堂課紀錄。',
+    meta: '真實陪課紀錄',
+    href: '/blog/tutorjr-10-lessons-parent-review/',
+  },
+  {
+    title: '我想先了解幼兒英文怎麼開始',
+    description:
+      '從英文輸入、共讀和家庭安排開始，不急著一次買齊所有教材。',
+    meta: '幼兒英文入門',
+    href: '/tag/幼兒英文/',
+  },
+  {
+    title: '我正在比較線上外師課',
+    description:
+      '從試聽、選老師、陪課到孩子不回答時的觀察，先了解再做決定。',
+    meta: '外師課評估',
+    href: '/category/線上外師課/',
+  },
+];
+
+const ageStages = [
+  {
+    age: '0–3歲',
+    title: '先建立熟悉感',
+    description:
+      '透過聲音、故事、童謠和日常互動，讓語言成為生活的一部分。',
+    href: '/tag/幼兒英文/',
+  },
+  {
+    age: '3–5歲',
+    title: '從興趣和遊戲開始',
+    description:
+      '孩子開始有自己的喜好，可以透過繪本、遊戲和短時間活動慢慢累積。',
+    href: '/category/親子共學/',
+  },
+  {
+    age: '5–7歲',
+    title: '增加表達與選擇',
+    description:
+      '除了持續輸入，也可以讓孩子練習表達、選擇內容和建立自己的學習習慣。',
+    href: '/tag/幼兒英文/',
+  },
+];
+---
+
+<BaseLayout
+  title="第一次來 Rose Lab｜從孩子現在的問題開始"
+  description="第一次來 Rose Lab，不知道從哪裡開始？依照幼兒英文、線上外師課、免費資源與親子共學等問題，快速找到適合自己家庭的內容。"
+  breadcrumbs={[{ name: '首頁', path: '/' }, { name: '我們怎麼開始', path: '/start/' }]}
+>
+  <main class="start-guide-page">
+
+    <!-- 首屏 -->
+    <section class="start-guide-hero" aria-labelledby="start-guide-title">
+      <div class="wrap start-guide-hero-inner">
+
+        <p class="section-kicker">START HERE</p>
+
+        <h1 id="start-guide-title">
+          第一次來 Rose Lab？<br />
+          先從你現在最困擾的問題開始
+        </h1>
+
+        <p class="start-guide-lead">
+          你不需要先把所有文章看完，也不用一次決定孩子接下來幾年的學習方式。
+          找到目前最想解決的問題，先看一篇真正用得上的內容就好。
+        </p>
+
+        <div class="start-guide-actions">
+          <a class="start-guide-button start-guide-button-primary" href="#choose-a-problem">
+            找到我的問題
+          </a>
+
+          <a class="start-guide-button start-guide-button-secondary" href="#first-three">
+            先看推薦的三篇
+          </a>
+        </div>
+
+        <div class="start-guide-note">
+          <strong>這一頁適合正在想：</strong>
+          孩子英文要怎麼開始、外師課適不適合、有哪些免費資源，
+          或家庭時間有限時該怎麼安排。
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- 依問題開始 -->
+    <section
+      class="wrap start-guide-section"
+      id="choose-a-problem"
+      aria-labelledby="choose-a-problem-title"
+    >
+      <div class="start-guide-heading">
+        <span>01</span>
+
+        <div>
+          <p>CHOOSE YOUR QUESTION</p>
+          <h2 id="choose-a-problem-title">你們家現在最需要解決哪一個問題？</h2>
+        </div>
+      </div>
+
+      <p class="start-guide-intro">
+        很多家長不是沒有做功課，而是方法太多，每一種都看起來不能錯過。
+        請直接選擇最接近你目前狀況的入口。
+      </p>
+
+      <div class="start-guide-problem-grid">
+        {
+          startingPoints.map((item) => (
+            <article class="start-guide-problem-card">
+              <div class="start-guide-card-top">
+                <span class="start-guide-card-number">{item.number}</span>
+                <span class="start-guide-card-label">{item.label}</span>
+              </div>
+
+              <h3>{item.title}</h3>
+
+              <p>{item.description}</p>
+
+              <ul>
+                {item.questions.map((question) => (
+                  <li>{question}</li>
+                ))}
+              </ul>
+
+              <a href={item.href}>
+                {item.linkText}
+                <span aria-hidden="true">→</span>
+              </a>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+
+    <!-- 建議先看三篇 -->
+    <section
+      class="start-guide-section start-guide-first-section"
+      id="first-three"
+      aria-labelledby="first-three-title"
+    >
+      <div class="wrap">
+
+        <div class="start-guide-heading">
+          <span>02</span>
+
+          <div>
+            <p>START WITH THESE</p>
+            <h2 id="first-three-title">還是不確定？先從這三個入口開始</h2>
+          </div>
+        </div>
+
+        <p class="start-guide-intro">
+          不必研究完整套學習路線。先從最接近你目前疑問的內容開始，
+          看完再決定下一步。
+        </p>
+
+        <div class="start-guide-feature-list">
+          {
+            quickTopics.map((item, index) => (
+              <a class="start-guide-feature-card" href={item.href}>
+                <span class="start-guide-feature-index">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+
+                <div>
+                  <p>{item.meta}</p>
+                  <h3>{item.title}</h3>
+                  <span>{item.description}</span>
+                </div>
+
+                <strong aria-hidden="true">→</strong>
+              </a>
+            ))
+          }
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- 年龄阶段 -->
+    <section
+      class="wrap start-guide-section"
+      aria-labelledby="age-stage-title"
+    >
+      <div class="start-guide-heading">
+        <span>03</span>
+
+        <div>
+          <p>BY YOUR CHILD’S STAGE</p>
+          <h2 id="age-stage-title">也可以依照孩子目前的階段開始</h2>
+        </div>
+      </div>
+
+      <p class="start-guide-intro">
+        年齡不是唯一標準，但不同階段常會遇到不同問題。
+        以下不是進度表，而是幫你縮小搜尋範圍。
+      </p>
+
+      <div class="start-guide-age-grid">
+        {
+          ageStages.map((stage) => (
+            <a class="start-guide-age-card" href={stage.href}>
+              <span>{stage.age}</span>
+              <h3>{stage.title}</h3>
+              <p>{stage.description}</p>
+              <strong>查看適合的內容 →</strong>
+            </a>
+          ))
+        }
+      </div>
+    </section>
+
+
+    <!-- 如何使用 Rose Lab -->
+    <section
+      class="start-guide-section start-guide-use-section"
+      aria-labelledby="use-rose-lab-title"
+    >
+      <div class="wrap">
+
+        <div class="start-guide-heading">
+          <span>04</span>
+
+          <div>
+            <p>HOW TO USE ROSE LAB</p>
+            <h2 id="use-rose-lab-title">不用照著別人家的進度走</h2>
+          </div>
+        </div>
+
+        <div class="start-guide-use-grid">
+
+          <div class="start-guide-use-copy">
+            <p>
+              看到別人家的孩子已經上外師課、讀英文繪本或使用很多學習資源，
+              很容易覺得自己是不是開始得太晚。
+            </p>
+
+            <p>
+              但對普通家庭來說，真正重要的往往不是一次加入多少內容，
+              而是選擇一件目前做得到的事，觀察孩子的反應，再慢慢調整。
+            </p>
+
+            <p>
+              你可以把 Rose Lab 當成一份參考紀錄，而不是必須完成的課表。
+            </p>
+          </div>
+
+          <div class="start-guide-steps">
+            <article>
+              <span>1</span>
+              <div>
+                <h3>先選一個問題</h3>
+                <p>不要同時研究所有教材、課程和方法。</p>
+              </div>
+            </article>
+
+            <article>
+              <span>2</span>
+              <div>
+                <h3>找到一個做得到的嘗試</h3>
+                <p>可能只是每天共讀10分鐘，或先安排一次試聽。</p>
+              </div>
+            </article>
+
+            <article>
+              <span>3</span>
+              <div>
+                <h3>觀察孩子，而不是只看進度</h3>
+                <p>注意孩子是否願意參與、是否逐漸熟悉，以及家庭能不能持續。</p>
+              </div>
+            </article>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- 阅读文章时可留意 -->
+    <section
+      class="wrap start-guide-section"
+      aria-labelledby="reading-guide-title"
+    >
+      <div class="start-guide-reading-box">
+
+        <div>
+          <p class="section-kicker">A SMALL READING GUIDE</p>
+          <h2 id="reading-guide-title">閱讀心得文章時，可以先留意這三件事</h2>
+        </div>
+
+        <div class="start-guide-reading-grid">
+          <article>
+            <span>01</span>
+            <h3>孩子當時是什麼狀態？</h3>
+            <p>
+              年齡、個性、是否熟悉英文，以及當天的情緒，
+              都可能影響一次上課或活動的反應。
+            </p>
+          </article>
+
+          <article>
+            <span>02</span>
+            <h3>家庭需要投入多少？</h3>
+            <p>
+              除了費用，也要考慮陪伴時間、家長準備工作，
+              以及能不能放進原本的生活。
+            </p>
+          </article>
+
+          <article>
+            <span>03</span>
+            <h3>這個方法適合你們家嗎？</h3>
+            <p>
+              別人有效，不代表一定適合自己的孩子。
+              可以先小範圍嘗試，再決定是否繼續。
+            </p>
+          </article>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- 分类导航 -->
+    <section
+      class="start-guide-section start-guide-topic-section"
+      aria-labelledby="all-topics-title"
+    >
+      <div class="wrap">
+
+        <div class="start-guide-heading">
+          <span>05</span>
+
+          <div>
+            <p>BROWSE BY TOPIC</p>
+            <h2 id="all-topics-title">想直接找特定主題？</h2>
+          </div>
+        </div>
+
+        <div class="start-guide-topic-grid">
+          <a href="/tag/幼兒英文/">
+            <span>幼兒英文</span>
+            <p>英文輸入、共讀與家庭安排</p>
+            <strong>查看文章 →</strong>
+          </a>
+
+          <a href="/category/線上外師課/">
+            <span>線上外師課</span>
+            <p>試聽、選老師與真實陪課心得</p>
+            <strong>查看文章 →</strong>
+          </a>
+
+          <a href="/category/免費英文資源/">
+            <span>免費資源</span>
+            <p>網站、App、圖書與實際使用方式</p>
+            <strong>查看文章 →</strong>
+          </a>
+
+          <a href="/category/親子共學/">
+            <span>親子共學</span>
+            <p>閱讀、興趣探索與生活學習</p>
+            <strong>查看文章 →</strong>
+          </a>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- 结尾 -->
+    <section class="start-guide-closing">
+      <div class="wrap start-guide-closing-inner">
+
+        <p>ONE STEP AT A TIME</p>
+
+        <h2>
+          今天先找到一篇適合你們家的內容，<br />
+          就已經是一個很好的開始
+        </h2>
+
+        <p>
+          不需要一次準備好所有教材，也不用急著追上別人的進度。
+          從孩子目前願意接受、家庭現在做得到的地方開始，
+          再一邊生活、一邊調整。
+        </p>
+
+        <div class="start-guide-actions">
+          <a
+            class="start-guide-button start-guide-button-primary"
+            href="/blog/tutorjr-10-lessons-parent-review/"
+          >
+            看第一篇真實紀錄
+          </a>
+
+          <a
+            class="start-guide-button start-guide-button-secondary"
+            href="/blog/"
+          >
+            查看所有文章
+          </a>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+</BaseLayout>

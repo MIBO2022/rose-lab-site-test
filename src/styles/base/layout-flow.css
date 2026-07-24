@@ -1,0 +1,121 @@
+/* =========================================================
+   Rose Lab｜共用頁面流與短頁面頁尾定位
+   ========================================================= */
+html{
+  min-height:100%;
+}
+body.site-body{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  overflow-x:hidden;
+}
+.site-content{
+  flex:1 0 auto;
+  width:100%;
+  min-height:0;
+}
+.footer{
+  flex:0 0 auto;
+  margin-top:auto;
+  position:static !important;
+  inset:auto !important;
+  z-index:auto;
+}
+
+/* 首页所有区块回归正常文档流，避免标题、卡片与页尾重叠 */
+.home{
+  position:relative;
+  display:block;
+  min-height:0;
+  overflow:visible;
+}
+.home > section,
+.home-section,
+.featured-story,
+.category-grid,
+.article-grid,
+.home-lists{
+  position:relative;
+  float:none;
+  clear:both;
+  height:auto !important;
+  min-height:0;
+  overflow:visible;
+}
+.home-section{
+  display:block;
+  width:100%;
+  margin-top:0;
+  margin-bottom:64px;
+  isolation:isolate;
+}
+.article-grid{
+  align-items:stretch;
+  grid-auto-rows:auto;
+}
+.article-card{
+  min-width:0;
+  height:auto !important;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+.article-card-body{
+  min-width:0;
+  flex:1 1 auto;
+  display:flex;
+  flex-direction:column;
+}
+.article-card-body time{
+  margin-top:auto;
+  padding-top:6px;
+}
+.article-card h3,
+.article-card h2,
+.article-card p{
+  overflow-wrap:anywhere;
+  word-break:normal;
+}
+.home-lists{
+  margin-top:72px;
+  margin-bottom:24px;
+  align-items:start;
+  z-index:1;
+  background:transparent;
+}
+.home-lists > div{
+  min-width:0;
+  position:relative;
+}
+.home-lists .section-head{
+  position:relative;
+  z-index:1;
+  background:var(--cream);
+}
+
+/* 防止社群图标或页尾文字盖到最后一张文章卡 */
+.footer-simple,
+.social-links{
+  position:relative;
+  float:none;
+}
+
+@media(max-width:900px){
+  .home-lists{
+    margin-top:56px;
+  }
+}
+@media(max-width:700px){
+  .home-section{
+    margin-bottom:48px;
+  }
+  .home-lists{
+    margin-top:42px;
+    gap:38px;
+  }
+  .article-card-body{
+    padding-bottom:20px;
+  }
+}
+

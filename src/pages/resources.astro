@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout title="免費英文資源｜Rose Lab 自學研究所" description="整理我們實際使用過的免費英文資源與家庭短練習方式。" breadcrumbs={[{ name: '首頁', path: '/' }, { name: '免費英文資源', path: '/resources/' }]}>
+  <section class="page-hero wrap">
+    <p class="section-kicker">FREE RESOURCES</p>
+    <h1>免費英文資源</h1>
+    <p class="lead">這一頁整理 Rose Lab 目前常用的免費資源，以及它們在家庭英文學習中的角色。</p>
+  </section>
+
+  <section class="section">
+    <div class="wrap post-grid">
+      <div class="post-card">
+        <span class="tag">APP</span>
+        <h3>Starfall</h3>
+        <p class="muted">適合拿來做字母、歌曲與基礎輸入；孩子對畫面和節奏通常很有反應，但它無法取代真人互動。</p>
+      </div>
+      <div class="post-card">
+        <span class="tag">APP</span>
+        <h3>Khan Academy Kids</h3>
+        <p class="muted">除了英文內容，也有故事和活動，很適合在家做輕鬆接觸，不必一次學太久。</p>
+      </div>
+      <div class="post-card">
+        <span class="tag">家庭陪學</span>
+        <h3>忙碌時的短練習</h3>
+        <p class="muted">有些日子不需要安排完整課程，只要把一句話、一首歌或一個情境放進生活裡就夠了。</p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

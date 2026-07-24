@@ -1,0 +1,36 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getVisiblePosts, seriesPath } from '../../utils/content';
+
+const posts = await getVisiblePosts();
+const seriesMap = new Map();
+for (const post of posts) {
+  if (!post.data.series) continue;
+  const list = seriesMap.get(post.data.series) ?? [];
+  list.push(post);
+  seriesMap.set(post.data.series, list);
+}
+const seriesList = [...seriesMap.entries()].map(([name, items]) => ({
+  name,
+  items: items.sort((a,b)=>(a.data.seriesOrder ?? 999)-(b.data.seriesOrder ?? 999)),
+}));
+---
+<BaseLayout
+  title="系列文章｜Rose Lab"
+  description="依主題與建議順序閱讀 Rose Lab 的家庭英文自學與教育選擇系列文章。"
+  breadcrumbs={[{ name: '首頁', path: '/' }, { name: '系列文章', path: '/series/' }]}
+>
+  <main class="wrap listing-page taxonomy-page">
+    <header class="page-header"><p class="eyebrow">ROSE LAB SERIES</p><h1>系列文章</h1><p>依照家庭實際執行順序整理，從第一篇開始閱讀即可。</p></header>
+    <div class="series-index-grid">
+      {seriesList.map(({ name, items }) => (
+        <a class="series-index-card" href={seriesPath(name)}>
+          <small>{items.length} 篇文章</small>
+          <h2>{name}</h2>
+          <p>{items[0]?.data.description}</p>
+          <span>查看完整系列 →</span>
+        </a>
+      ))}
+    </div>
+  </main>
+</BaseLayout>

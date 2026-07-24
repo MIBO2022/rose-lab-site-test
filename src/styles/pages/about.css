@@ -1,0 +1,110 @@
+/* =========================================================
+   About Rose Lab
+   ========================================================= */
+
+.about-page .page-hero{
+  max-width:820px;
+  padding-top:68px;
+  padding-bottom:34px;
+}
+
+.about-page .page-hero .lead{
+  max-width:760px;
+  font-size:18px;
+  line-height:1.9;
+}
+
+.about-page .content-card p{
+  color:var(--muted);
+  line-height:1.85;
+}
+
+.about-page .content-card p:last-child{
+  margin-bottom:0;
+}
+
+.about-principles{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:1px;
+  margin-top:24px;
+  border:1px solid var(--line);
+  background:var(--line);
+}
+
+.about-principles article{
+  display:grid;
+  grid-template-columns:44px 1fr;
+  gap:14px;
+  padding:25px;
+  background:#fff;
+}
+
+.about-principles article > span{
+  color:var(--rose);
+  font-size:13px;
+  font-weight:900;
+}
+
+.about-principles h3{
+  margin:0 0 8px;
+  color:var(--ink);
+  font-size:18px;
+  line-height:1.5;
+}
+
+.about-principles p{
+  margin:0;
+  font-size:15px;
+}
+
+.about-contact-card{
+  text-align:center;
+  background:
+    linear-gradient(
+      135deg,
+      var(--rose-soft),
+      var(--forest-soft)
+    );
+}
+
+.about-contact-card > p{
+  max-width:720px;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+.about-actions{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:22px;
+  margin-top:22px;
+}
+
+@media(max-width:700px){
+  .about-page .page-hero{
+    padding-top:42px;
+    padding-bottom:20px;
+  }
+
+  .about-page .page-hero .lead{
+    font-size:16px;
+  }
+
+  .about-principles{
+    grid-template-columns:1fr;
+  }
+
+  .about-principles article{
+    grid-template-columns:35px 1fr;
+    padding:21px 18px;
+  }
+
+  .about-actions{
+    display:grid;
+    justify-items:center;
+    gap:12px;
+  }
+}
+

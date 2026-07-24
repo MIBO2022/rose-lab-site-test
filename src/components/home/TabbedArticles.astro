@@ -1,0 +1,39 @@
+---
+const { latest, popular } = Astro.props;
+---
+<section class="tabbed-articles" aria-labelledby="tabbed-title">
+  <h2 id="tabbed-title" class="visually-hidden">最新文章與熱門文章</h2>
+  <div class="article-tabs" role="tablist" aria-label="文章排序">
+    <button class="article-tab is-active" type="button" role="tab" aria-selected="true" data-tab="latest">最新文章</button>
+    <button class="article-tab" type="button" role="tab" aria-selected="false" data-tab="popular">熱門文章</button>
+  </div>
+  <div class="tab-feedback" id="tabFeedback" aria-live="polite">正在查看最新文章</div>
+  <div class="tabbed-grid" id="tabbedArticleGrid" aria-live="polite"></div>
+  <nav class="home-pagination" id="homePagination" aria-label="文章分頁"></nav>
+</section>
+<script define:vars={{ serializedLatest: latest, serializedPopular: popular }}>
+  const articleData={latest:serializedLatest,popular:serializedPopular};
+  const grid=document.getElementById('tabbedArticleGrid');
+  const pagination=document.getElementById('homePagination');
+  const feedback=document.getElementById('tabFeedback');
+  const tabs=Array.from(document.querySelectorAll('.article-tab'));
+  const pageSize=6;let activeTab='latest';let activePage=1;
+  const escapeHtml=(value)=>String(value).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
+  function renderArticles({animate=false}={}){
+    if(animate)grid.classList.add('is-changing');
+    const items=articleData[activeTab]||[];const totalPages=Math.max(1,Math.ceil(items.length/pageSize));activePage=Math.min(activePage,totalPages);
+    const visible=items.slice((activePage-1)*pageSize,activePage*pageSize);
+    grid.innerHTML=visible.length?visible.map((item)=>`<article class="tabbed-card"><a class="tabbed-cover" href="${escapeHtml(item.url)}"><img src="${escapeHtml(item.cover)}" alt="${escapeHtml(item.coverAlt)}" loading="lazy" /></a><div class="tabbed-card-body"><span class="tabbed-category">${escapeHtml(item.category)}</span><h3><a href="${escapeHtml(item.url)}">${escapeHtml(item.title)}</a></h3><time>◷ ${escapeHtml(item.date)}</time></div></article>`).join(''):'<p class="empty-articles">目前尚未有文章。</p>';
+    renderPagination(totalPages);
+    if(feedback){feedback.textContent=activeTab==='latest'?'正在查看最新文章':'正在查看熱門文章';feedback.dataset.mode=activeTab;}
+    requestAnimationFrame(()=>{grid.classList.remove('is-changing');grid.classList.add('is-entering');window.setTimeout(()=>grid.classList.remove('is-entering'),420);});
+  }
+  function renderPagination(totalPages){
+    const visiblePages=totalPages<=7?Array.from({length:totalPages},(_,i)=>i+1):[1,2,3,'ellipsis',totalPages];
+    pagination.innerHTML=visiblePages.map((page)=>{if(page==='ellipsis')return '<span class="pagination-ellipsis" aria-hidden="true">…</span>';const isActive=page===activePage;return `<button type="button" class="pagination-button${isActive?' is-active':''}" data-page="${page}" aria-current="${isActive?'page':'false'}">${page}</button>`;}).join('');
+    pagination.querySelectorAll('[data-page]').forEach((button)=>button.addEventListener('click',()=>{activePage=Number(button.dataset.page);renderArticles({animate:true});document.querySelector('.tabbed-articles')?.scrollIntoView({behavior:'smooth',block:'start'});}));
+  }
+  tabs.forEach((tab)=>tab.addEventListener('click',()=>{activeTab=tab.dataset.tab;activePage=1;tabs.forEach((item)=>{const selected=item===tab;item.classList.toggle('is-active',selected);item.setAttribute('aria-selected',selected?'true':'false');});tab.classList.remove('is-bouncing');void tab.offsetWidth;tab.classList.add('is-bouncing');window.setTimeout(()=>tab.classList.remove('is-bouncing'),460);renderArticles({animate:true});}));
+  document.addEventListener('pointerdown',(event)=>{const target=event.target.closest('.article-tab, .pagination-button, .category-card, .roundup-cover, .tabbed-cover, .tabbed-card h3 a');if(!target)return;const rect=target.getBoundingClientRect();const ripple=document.createElement('span');ripple.className='playful-ripple';ripple.style.left=`${event.clientX-rect.left}px`;ripple.style.top=`${event.clientY-rect.top}px`;target.appendChild(ripple);window.setTimeout(()=>ripple.remove(),600);});
+  renderArticles();
+</script>

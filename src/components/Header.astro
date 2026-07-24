@@ -1,0 +1,127 @@
+---
+import { MOBILE_NAV, PRIMARY_NAV, SITE } from '../config/site';
+import { getVisiblePosts, postPath } from '../utils/content';
+
+const posts = (await getVisiblePosts()).map((post) => ({
+  title: post.data.title,
+  description: post.data.description,
+  category: post.data.category,
+  url: postPath(post),
+}));
+---
+<header class="site-header" id="top">
+  <div class="header-main wrap">
+    <button class="mobile-menu-trigger" type="button" aria-controls="site-menu" aria-expanded="false" aria-label="開啟選單">
+      <span></span><span></span><span></span>
+    </button>
+
+    <a class="brand" href="/" aria-label="Rose Lab 自學研究所首頁">
+      <img src={SITE.mark.src} alt="Rose Lab" width={SITE.mark.width} height={SITE.mark.height} />
+      <span class="brand-subtitle">自學研究所</span>
+    </a>
+
+    <nav class="desktop-nav" aria-label="主要選單">
+      {PRIMARY_NAV.map((item) => (
+        <a href={item.href}>
+          <span>{item.label}</span>
+          <small>{item.english}</small>
+        </a>
+      ))}
+    </nav>
+
+    <button class="search-trigger" type="button" aria-controls="search-panel" aria-expanded="false" aria-label="搜尋文章">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4.4-4.4"></path></svg>
+    </button>
+  </div>
+
+  <div class="drawer" id="site-menu" hidden>
+    <div class="drawer-panel">
+      <div class="drawer-head">
+        <strong>選單</strong>
+        <button class="drawer-close" type="button" aria-label="關閉選單">×</button>
+      </div>
+      <nav class="drawer-nav">
+        {MOBILE_NAV.map((item) => (
+          <a href={item.href}><span>{item.label}</span><small>{item.english}</small></a>
+        ))}
+      </nav>
+    </div>
+  </div>
+
+  <div class="search-panel" id="search-panel" hidden>
+    <div class="search-box" role="dialog" aria-modal="true" aria-label="搜尋文章">
+      <div class="search-head">
+        <strong>搜尋 Rose Lab</strong>
+        <button class="search-close" type="button" aria-label="關閉搜尋">×</button>
+      </div>
+      <input class="search-input" type="search" placeholder="搜尋文章、主題或工具" autocomplete="off" />
+      <div class="search-results" aria-live="polite"><p>輸入關鍵字，例如：外師課、Starfall、試聽、親子共讀。</p></div>
+    </div>
+  </div>
+</header>
+
+<script define:vars={{ posts }}>
+  const menu = document.querySelector('#site-menu');
+  const menuTrigger = document.querySelector('.mobile-menu-trigger');
+  const menuClose = document.querySelector('.drawer-close');
+  const search = document.querySelector('#search-panel');
+  const searchTrigger = document.querySelector('.search-trigger');
+  const searchClose = document.querySelector('.search-close');
+  const searchInput = document.querySelector('.search-input');
+  const searchResults = document.querySelector('.search-results');
+
+  const escapeHTML = (value = '') => value.replace(/[&<>'"]/g, (char) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+  })[char]);
+
+  const openLayer = (layer, trigger) => {
+    layer.hidden = false;
+    trigger?.setAttribute('aria-expanded', 'true');
+    document.body.classList.add('no-scroll');
+  };
+
+  const closeLayer = (layer, trigger) => {
+    layer.hidden = true;
+    trigger?.setAttribute('aria-expanded', 'false');
+    document.body.classList.remove('no-scroll');
+  };
+
+  menuTrigger?.addEventListener('click', () => openLayer(menu, menuTrigger));
+  menuClose?.addEventListener('click', () => closeLayer(menu, menuTrigger));
+  menu?.addEventListener('click', (event) => {
+    if (event.target === menu || event.target.closest('a')) closeLayer(menu, menuTrigger);
+  });
+
+  searchTrigger?.addEventListener('click', () => {
+    openLayer(search, searchTrigger);
+    requestAnimationFrame(() => searchInput?.focus());
+  });
+  searchClose?.addEventListener('click', () => closeLayer(search, searchTrigger));
+  search?.addEventListener('click', (event) => {
+    if (event.target === search) closeLayer(search, searchTrigger);
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape') return;
+    if (!menu.hidden) closeLayer(menu, menuTrigger);
+    if (!search.hidden) closeLayer(search, searchTrigger);
+  });
+
+  searchInput?.addEventListener('input', () => {
+    const query = searchInput.value.trim().toLocaleLowerCase('zh-Hant-TW');
+    if (!query) {
+      searchResults.innerHTML = '<p>輸入關鍵字後開始搜尋。</p>';
+      return;
+    }
+
+    const found = posts.filter((post) =>
+      `${post.title} ${post.description} ${post.category}`
+        .toLocaleLowerCase('zh-Hant-TW')
+        .includes(query),
+    );
+
+    searchResults.innerHTML = found.length
+      ? found.map((post) => `<a href="${post.url}"><small>${escapeHTML(post.category)}</small><strong>${escapeHTML(post.title)}</strong><span>${escapeHTML(post.description)}</span></a>`).join('')
+      : '<p>目前找不到符合的文章。可以試著搜尋「外師課」、「免費 App」或「親子共學」。</p>';
+  });
+</script>

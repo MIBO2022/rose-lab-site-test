@@ -1,0 +1,72 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { categoryPath, getVisiblePosts, seriesPath, tagPath } from '../utils/content';
+import { getCategoryMeta, SITE } from '../config/site';
+
+const posts = await getVisiblePosts();
+const siteUrl = Astro.site ?? new URL(SITE.url);
+const categoryCounts = new Map<string, number>();
+const tagCounts = new Map<string, number>();
+const seriesCounts = new Map<string, number>();
+
+for (const post of posts) {
+  categoryCounts.set(post.data.category, (categoryCounts.get(post.data.category) ?? 0) + 1);
+  for (const tag of post.data.tags ?? []) tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+  if (post.data.series) seriesCounts.set(post.data.series, (seriesCounts.get(post.data.series) ?? 0) + 1);
+}
+
+const categories = [...categoryCounts.entries()].sort((a,b)=>b[1]-a[1]);
+const tags = [...tagCounts.entries()].sort((a,b)=>b[1]-a[1] || a[0].localeCompare(b[0], 'zh-Hant'));
+const series = [...seriesCounts.entries()].sort((a,b)=>b[1]-a[1]);
+const itemListJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'Rose Lab 主題總覽',
+  itemListElement: categories.map(([name], index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    name,
+    url: new URL(categoryPath(name), siteUrl).href,
+  })),
+};
+---
+<BaseLayout
+  title="主題總覽｜Rose Lab"
+  description="依分類、標籤與系列快速找到 Rose Lab 的幼兒英文、外師課、免費資源與家庭教育文章。"
+  jsonLd={itemListJsonLd}
+  breadcrumbs={[{ name: '首頁', path: '/' }, { name: '主題總覽', path: '/topics/' }]}
+>
+  <main class="wrap listing-page topics-page">
+    <header class="page-header">
+      <p class="eyebrow">EXPLORE ROSE LAB</p>
+      <h1>主題總覽</h1>
+      <p>不知道從哪一篇開始，可以先按分類、系列或常用標籤瀏覽。</p>
+    </header>
+
+    <section class="topic-section" aria-labelledby="topic-categories">
+      <h2 id="topic-categories">文章分類</h2>
+      <div class="topic-category-grid">
+        {categories.map(([name, count]) => {
+          const meta = getCategoryMeta(name, count);
+          return <a class="topic-category-card" href={categoryPath(name)} style={`--topic-color:${meta.color}`}>
+            <strong>{name}</strong><span>{meta.description}</span><small>{count} 篇文章 →</small>
+          </a>;
+        })}
+      </div>
+    </section>
+
+    {series.length > 0 && <section class="topic-section" aria-labelledby="topic-series">
+      <h2 id="topic-series">系列文章</h2>
+      <div class="topic-link-cloud">
+        {series.map(([name, count]) => <a href={seriesPath(name)}><strong>{name}</strong><span>{count} 篇</span></a>)}
+      </div>
+    </section>}
+
+    <section class="topic-section" aria-labelledby="topic-tags">
+      <h2 id="topic-tags">常用標籤</h2>
+      <div class="topic-tag-cloud">
+        {tags.map(([name, count]) => <a href={tagPath(name)}>#{name}<small>{count}</small></a>)}
+      </div>
+    </section>
+  </main>
+</BaseLayout>
